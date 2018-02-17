@@ -44,14 +44,14 @@ const tripletQualifiers = [
 	"billion",
 	"trillion",
 	"quadrillion"
-
 ];
 
-export function getNumberOfTriplets(ordersOfMagnitude) {
-	return Math.ceil(ordersOfMagnitude / 3);
-}
-
-export function doubleDigitToWords(doubleDigitString) {
+/**
+ * Private helper method which converts a two digit string to words.
+ * For performance and simplicity this function assumes that the
+ * doubleDigitString passed in is in fact two valid numeric characters.
+ */
+function _doubleDigitToWords(doubleDigitString) {
 	let words = "";
 	let doubleDigitNumber = Number.parseInt(doubleDigitString);
 
@@ -73,36 +73,41 @@ export function doubleDigitToWords(doubleDigitString) {
 	return words;
 }
 
-export function isValidNumber(inputString) {
-	return /^-?(([1-9]\d*)|0)$/.test(inputString);
-}
-
-export function tripleDigitToWords(tripletString, insertAnd) {
+/**
+ * Private helper method which converts a two digit string to words.
+ * For performance and simplicity this function assumes that the
+ * tripleDigitString passed in is in fact three valid numeric characters.
+ */
+function _tripleDigitToWords(tripleDigitString, isPartOfLargerNumber, isLast) {
 	let words = "";
+	const hundredDigit = tripleDigitString.charAt(0);
+	const hundredDigitNumeric = Number.parseInt(hundredDigit);
+	const lastTwoDigits = tripleDigitString.substr(1);
+	const lastTwoDigitsNumeric = Number.parseInt(lastTwoDigits);
 
-	if (3 === tripletString.length) {
-		let hundredDigit = tripletString.charAt(0);
-		let hundredDigitNumeric = Number.parseInt(hundredDigit);
-
-		if (0 < hundredDigitNumeric) {
-			words += singleDigitToWord[hundredDigitNumeric] + " hundred";
-		}
+	if (0 < hundredDigitNumeric) {
+		words += singleDigitToWord[hundredDigitNumeric] + " hundred";
 	}
 
-	if (2 <= tripletString.length) {
-		const lastTwoDigits = tripletString.substr(1);
-		const lastTwoDigitsNumeric = Number.parseInt(lastTwoDigits);
+	const insertAnd = isLast && (isPartOfLargerNumber || (words !== ""));
 
-		if (insertAnd && 0 < lastTwoDigitsNumeric) {
-			words += " and";
-		}
-
-		words += " " + doubleDigitToWords(lastTwoDigits);
-	} else if (1 === tripletString.length) {
-		words += singleDigitToWord[tripletString];
+	if (insertAnd && 0 < lastTwoDigitsNumeric) {
+		words += " and";
 	}
+
+	words += " " + _doubleDigitToWords(lastTwoDigits);
+
 
 	return words.trim();
+}
+
+export const __TEST_ONLY__ = {
+	_doubleDigitToWords: _doubleDigitToWords,
+	_tripleDigitToWords: _tripleDigitToWords
+};
+
+export function isValidNumber(inputString) {
+	return /^-?(([1-9]\d*)|0)$/.test(inputString);
 }
 
 export default function numberToWords(inputString) {
@@ -118,22 +123,22 @@ export default function numberToWords(inputString) {
 	let isNegative = inputString.charAt(0) === "-";
 	let unparsedString = isNegative ? inputString.substr(1) : inputString;
 	let ordersOfMagnitude =  unparsedString.length;
-	let numberOfTripletsLeft = getNumberOfTriplets(ordersOfMagnitude);
+	let numberOfThreeDigitGroupsLeft = Math.ceil(ordersOfMagnitude / 3);
 
 	while (unparsedString.length > 0) {
-		let currentTripletLength = unparsedString.length % 3;
-		if (0 === currentTripletLength) {
-			currentTripletLength = 3;
+		let currentDigitGroupLength = unparsedString.length % 3;
+		if (0 === currentDigitGroupLength) {
+			currentDigitGroupLength = 3;
 		}
-		const currentTriplet = unparsedString.substr(0, currentTripletLength - 1);
-		const insertAnd = numberOfTripletsLeft === 1;
+		const currentTriplet = unparsedString.substr(0, currentDigitGroupLength - 1);
+		const insertAnd = numberOfThreeDigitGroupsLeft === 1;
 
-		words += " " + tripleDigitToWords(currentTriplet, insertAnd);
-		numberOfTripletsLeft -= 1;
+		words += " " + _tripleDigitToWords(currentTriplet, insertAnd);
+		numberOfThreeDigitGroupsLeft -= 1;
 
-		words += " " + tripletQualifiers[numberOfTripletsLeft];
+		words += " " + tripletQualifiers[numberOfThreeDigitGroupsLeft];
 
-		unparsedString = unparsedString.substr(currentTripletLength);
+		unparsedString = unparsedString.substr(currentDigitGroupLength);
 	}
 
 	return words;
