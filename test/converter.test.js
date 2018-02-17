@@ -1,5 +1,5 @@
 import {assert} from "chai";
-import {
+import numberToWords, {
 	isValidNumber,
 	__TEST_ONLY__
 } from "../src/converter";
@@ -8,46 +8,6 @@ const _doubleDigitToWords = __TEST_ONLY__._doubleDigitToWords;
 const _tripleDigitToWords = __TEST_ONLY__._tripleDigitToWords;
 
 describe("converter", function() {
-
-	describe("isValidNumber", function() {
-		it("returns true for valid positive integers", function() {
-			assert.isTrue(isValidNumber("0"));
-			assert.isTrue(isValidNumber("1"));
-			assert.isTrue(isValidNumber("9"));
-			assert.isTrue(isValidNumber("11"));
-			assert.isTrue(isValidNumber("1234567890"));
-		});
-
-		it("returns true for valid negative integers", function() {
-			assert.isTrue(isValidNumber("-1"));
-			assert.isTrue(isValidNumber("-11"));
-			assert.isTrue(isValidNumber("-9"));
-			assert.isTrue(isValidNumber("-9999999"));
-		});
-
-		it("returns false for numbers with delimiters", function() {
-			assert.isFalse(isValidNumber("1,000"));
-			assert.isFalse(isValidNumber("9,999,999"));
-		});
-
-		it("returns false for numbers with decimal points", function() {
-			assert.isFalse(isValidNumber("0.1"));
-			assert.isFalse(isValidNumber("1.1"));
-		});
-
-		it("returns false for numbers that start with 0", function() {
-			assert.isFalse(isValidNumber("01"));
-			assert.isFalse(isValidNumber("000001"));
-		});
-
-		it("returns false for input string with non numeric characters", function() {
-			assert.isFalse(isValidNumber("b2"));
-			assert.isFalse(isValidNumber("1a1"));
-			assert.isFalse(isValidNumber("123c"));
-			assert.isFalse(isValidNumber("100 1"));
-			assert.isFalse(isValidNumber("$100"));
-		});
-	});
 
 	describe("_doubleDigitToWords", function() {
 		it("returns the correct words for valid input", function() {
@@ -106,10 +66,114 @@ describe("converter", function() {
 				assert.equal(_tripleDigitToWords("019", true, false), "nineteen");
 				assert.equal(_tripleDigitToWords("020", true, false), "twenty");
 				assert.equal(_tripleDigitToWords("042", true, false), "forty two");
-				assert.equal(_tripleDigitToWords("089", true, false), "eighty nine");
 				assert.equal(_tripleDigitToWords("101", true, false), "one hundred one");
+				assert.equal(_tripleDigitToWords("089", true, false), "eighty nine");
 				assert.equal(_tripleDigitToWords("900", true, false), "nine hundred");
 				assert.equal(_tripleDigitToWords("978", true, false), "nine hundred seventy eight");
+			});
+		});
+	});
+
+	describe("isValidNumber", function() {
+		it("returns true for valid positive integers", function() {
+			assert.isTrue(isValidNumber("0"));
+			assert.isTrue(isValidNumber("1"));
+			assert.isTrue(isValidNumber("9"));
+			assert.isTrue(isValidNumber("11"));
+			assert.isTrue(isValidNumber("1234567890"));
+			assert.isTrue(isValidNumber("1234567890123456789012345678901234567890"));
+		});
+
+		it("returns true for valid negative integers", function() {
+			assert.isTrue(isValidNumber("-1"));
+			assert.isTrue(isValidNumber("-11"));
+			assert.isTrue(isValidNumber("-9"));
+			assert.isTrue(isValidNumber("-9999999"));
+		});
+
+		it("returns false for numbers with delimiters", function() {
+			assert.isFalse(isValidNumber("1,000"));
+			assert.isFalse(isValidNumber("9,999,999"));
+		});
+
+		it("returns false for numbers with decimal points", function() {
+			assert.isFalse(isValidNumber("0.1"));
+			assert.isFalse(isValidNumber("1.1"));
+		});
+
+		it("returns false for numbers that start with 0", function() {
+			assert.isFalse(isValidNumber("01"));
+			assert.isFalse(isValidNumber("000001"));
+		});
+
+		it("returns false for input string with non numeric characters", function() {
+			assert.isFalse(isValidNumber("b2"));
+			assert.isFalse(isValidNumber("1a1"));
+			assert.isFalse(isValidNumber("123c"));
+			assert.isFalse(isValidNumber("100 1"));
+			assert.isFalse(isValidNumber("$100"));
+		});
+	});
+
+	describe("numberToWords", function() {
+		context("invalid input", function() {
+			it("throws an exception for invalid input", function() {
+				assert.throws(numberToWords.bind(this, "1.1"));
+			});
+		});
+
+		context("valid input", function() {
+			it("properly converts single digits", function() {
+				assert.equal(numberToWords("0"), "Zero");
+				assert.equal(numberToWords("1"), "One");
+				assert.equal(numberToWords("-1"), "Minus one");
+				assert.equal(numberToWords("2"), "Two");
+				assert.equal(numberToWords("-2"), "Minus two");
+				assert.equal(numberToWords("9"), "Nine");
+				assert.equal(numberToWords("-9"), "Minus nine");
+			});
+
+			it("properly converts double digits", function() {
+				assert.equal(numberToWords("10"), "Ten");
+				assert.equal(numberToWords("-10"), "Minus ten");
+				assert.equal(numberToWords("11"), "Eleven");
+				assert.equal(numberToWords("-11"), "Minus eleven");
+				assert.equal(numberToWords("15"), "Fifteen");
+				assert.equal(numberToWords("-15"), "Minus fifteen");
+			});
+
+			it("properly converts triple digits", function() {
+				assert.equal(numberToWords("100"), "One hundred");
+				assert.equal(numberToWords("-100"), "Minus one hundred");
+				assert.equal(numberToWords("111"), "One hundred and eleven");
+				assert.equal(numberToWords("-111"), "Minus one hundred and eleven");
+				assert.equal(numberToWords("600"), "Six hundred");
+				assert.equal(numberToWords("-600"), "Minus six hundred");
+				assert.equal(numberToWords("901"), "Nine hundred and one");
+				assert.equal(numberToWords("987"), "Nine hundred and eighty seven");
+				assert.equal(numberToWords("999"), "Nine hundred and ninety nine");
+			});
+
+			it("properly converts thousands", function() {
+				assert.equal(numberToWords("1000"), "One thousand");
+				assert.equal(numberToWords("1100"), "One thousand one hundred");
+				assert.equal(numberToWords("1101"), "One thousand one hundred and one");
+				assert.equal(numberToWords("1111"), "One thousand one hundred and eleven");
+				assert.equal(numberToWords("2222"), "Two thousand two hundred and twenty two");
+				assert.equal(numberToWords("-1000"), "Minus one thousand");
+				assert.equal(numberToWords("-2222"), "Minus two thousand two hundred and twenty two");
+				assert.equal(numberToWords("10000"), "Ten thousand");
+				assert.equal(numberToWords("10208"), "Ten thousand two hundred and eight");
+				assert.equal(numberToWords("100208"), "One hundred thousand two hundred and eight");
+				assert.equal(numberToWords("101101"), "One hundred one thousand one hundred and one");
+			});
+
+			it("properly converts millions and above", function() {
+				assert.equal(numberToWords("1000000"), "One million");
+				assert.equal(numberToWords("1101101"), "One million one hundred one thousand one hundred and one");
+				assert.equal(numberToWords("9000000000"), "Nine billion");
+				assert.equal(numberToWords("9000000000000"), "Nine trillion");
+				assert.equal(numberToWords("9000000000000000"), "Nine quadrillion");
 			});
 		});
 	});

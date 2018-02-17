@@ -1,4 +1,4 @@
-const singleDigitToWord = [
+const SINGLE_DIGITS = [
 	"zero",
 	"one",
 	"two",
@@ -11,7 +11,7 @@ const singleDigitToWord = [
 	"nine",
 ];
 
-const tenToNineteen = [
+const TEN_TO_NINETEEN = [
 	"ten",
 	"eleven",
 	"twelve",
@@ -24,7 +24,7 @@ const tenToNineteen = [
 	"nineteen"
 ];
 
-const twentyToNinety = [
+const TWENTY_TO_NINETY = [
 	"",
 	"",
 	"twenty",
@@ -37,7 +37,7 @@ const twentyToNinety = [
 	"ninety"
 ];
 
-const tripletQualifiers = [
+const PERIOD_NAMES = [
 	"",
 	"thousand",
 	"million",
@@ -56,17 +56,17 @@ function _doubleDigitToWords(doubleDigitString) {
 	let doubleDigitNumber = Number.parseInt(doubleDigitString);
 
 	if (1 <= doubleDigitNumber && 10 > doubleDigitNumber) {
-		words += singleDigitToWord[doubleDigitNumber];
+		words += SINGLE_DIGITS[doubleDigitNumber];
 	} else if (10 <= doubleDigitNumber && 20 > doubleDigitNumber) {
-		words += tenToNineteen[doubleDigitNumber - 10];
+		words += TEN_TO_NINETEEN[doubleDigitNumber - 10];
 	} else if (20 <= doubleDigitNumber) {
 		let decimalDigit = doubleDigitString.charAt(0);
 		let singleDigit = doubleDigitString.charAt(1);
 
-		words += twentyToNinety[decimalDigit];
+		words += TWENTY_TO_NINETY[decimalDigit];
 
 		if (singleDigit !== "0") {
-			words += " " + singleDigitToWord[singleDigit];
+			words += " " + SINGLE_DIGITS[singleDigit];
 		}
 	}
 
@@ -78,7 +78,7 @@ function _doubleDigitToWords(doubleDigitString) {
  * For performance and simplicity this function assumes that the
  * tripleDigitString passed in is in fact three valid numeric characters.
  */
-function _tripleDigitToWords(tripleDigitString, isPartOfLargerNumber, isLast) {
+function _tripleDigitToWords(tripleDigitString, isPartOfLargerNumber, isFirst) {
 	let words = "";
 	const hundredDigit = tripleDigitString.charAt(0);
 	const hundredDigitNumeric = Number.parseInt(hundredDigit);
@@ -86,17 +86,16 @@ function _tripleDigitToWords(tripleDigitString, isPartOfLargerNumber, isLast) {
 	const lastTwoDigitsNumeric = Number.parseInt(lastTwoDigits);
 
 	if (0 < hundredDigitNumeric) {
-		words += singleDigitToWord[hundredDigitNumeric] + " hundred";
+		words += SINGLE_DIGITS[hundredDigitNumeric] + " hundred";
 	}
 
-	const insertAnd = isLast && (isPartOfLargerNumber || (words !== ""));
+	const insertAnd = isFirst && (isPartOfLargerNumber || (words !== ""));
 
 	if (insertAnd && 0 < lastTwoDigitsNumeric) {
 		words += " and";
 	}
 
 	words += " " + _doubleDigitToWords(lastTwoDigits);
-
 
 	return words.trim();
 }
@@ -122,24 +121,44 @@ export default function numberToWords(inputString) {
 	let words = "";
 	let isNegative = inputString.charAt(0) === "-";
 	let unparsedString = isNegative ? inputString.substr(1) : inputString;
-	let ordersOfMagnitude =  unparsedString.length;
-	let numberOfThreeDigitGroupsLeft = Math.ceil(ordersOfMagnitude / 3);
+	let currentPeriodIndex = 0;
+	let currentDigitGroup = unparsedString.substring(unparsedString.length - 3);
 
-	while (unparsedString.length > 0) {
-		let currentDigitGroupLength = unparsedString.length % 3;
-		if (0 === currentDigitGroupLength) {
-			currentDigitGroupLength = 3;
+	while (0 < currentDigitGroup.length) {
+		let currentDigitGroupConverted = "";
+
+		if (0 < currentPeriodIndex && 0 < words.length) {
+			words = " " + words;
 		}
-		const currentTriplet = unparsedString.substr(0, currentDigitGroupLength - 1);
-		const insertAnd = numberOfThreeDigitGroupsLeft === 1;
 
-		words += " " + _tripleDigitToWords(currentTriplet, insertAnd);
-		numberOfThreeDigitGroupsLeft -= 1;
+		switch (currentDigitGroup.length) {
+			case 1:
+				currentDigitGroupConverted = SINGLE_DIGITS[currentDigitGroup];
+				break;
+			case 2:
+				currentDigitGroupConverted = _doubleDigitToWords(currentDigitGroup);
+				break;
+			case 3:
+				currentDigitGroupConverted = _tripleDigitToWords(currentDigitGroup, 0 < unparsedString.length - 3, 0 === currentPeriodIndex);
+				break;
+			default:
+				// should not be reachable
+				throw Error("unexpected parse error, currentDigitGroup.length = " + currentDigitGroup.length);
+		}
 
-		words += " " + tripletQualifiers[numberOfThreeDigitGroupsLeft];
+		if (0 < currentDigitGroupConverted.length) {
+			const periodString = (0 < currentPeriodIndex) ? " " + PERIOD_NAMES[currentPeriodIndex] : "";
+			words = currentDigitGroupConverted + periodString + words;
+		}
 
-		unparsedString = unparsedString.substr(currentDigitGroupLength);
+		unparsedString = unparsedString.substring(0, unparsedString.length - 3);
+		currentDigitGroup = unparsedString.substring(unparsedString.length - 3);
+		currentPeriodIndex++;
 	}
 
-	return words;
+	if (isNegative) {
+		words = "Minus " + words;
+	}
+
+	return words.charAt(0).toUpperCase() + words.substring(1);
 }
