@@ -1,0 +1,40 @@
+{
+	"name": "num-words",
+	"version": "0.0.1",
+	"description": "Converts numbers into words",
+	"main": "index.js",
+	"scripts": {
+		"build": "webpack",
+		"test": "karma start"
+	},
+	"repository": {
+		"type": "git",
+		"url": "."
+	},
+	"keywords": [
+		"sonatype",
+		"number",
+		"numbers",
+		"word",
+		"words",
+		"convert",
+		"converter"
+	],
+	"author": "elijahel@gmail.com",
+	"license": "ISC",
+	"devDependencies": {
+		"babel-core": "^6.26.0",
+		"babel-loader": "^7.1.2",
+		"babel-preset-env": "^1.6.1",
+		"chai": "^4.1.2",
+		"eslint": "^4.17.0",
+		"eslint-plugin-react": "^7.6.1",
+		"karma": "^2.0.0",
+		"karma-chrome-launcher": "^2.2.0",
+		"karma-firefox-launcher": "^1.1.0",
+		"karma-mocha": "^1.3.0",
+		"karma-webpack": "^2.0.9",
+		"mocha": "^5.0.1",
+		"webpack": "^3.11.0"
+	}
+}
