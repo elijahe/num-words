@@ -43,7 +43,23 @@ const PERIOD_NAMES = [
 	"million",
 	"billion",
 	"trillion",
-	"quadrillion"
+	"quadrillion",
+	"quintillion",
+	"sextillion",
+	"septillion",
+	"octillion",
+	"nonillion",
+	"decillion",
+	"undecillion",
+	"duodecillion",
+	"tredecillion",
+	"quattuordecillion",
+	"quindecillion",
+	"sexdecillion",
+	"septendecillion",
+	"octodecillion",
+	"novemdecillion",
+	"vigintillion",
 ];
 
 /**
@@ -127,7 +143,7 @@ export default function numberToWords(inputString) {
 	while (0 < currentDigitGroup.length) {
 		let currentDigitGroupConverted = "";
 
-		if (0 < currentPeriodIndex && 0 < words.length) {
+		if (0 < currentPeriodIndex && 0 < words.length && " " !== words.charAt(0)) {
 			words = " " + words;
 		}
 
