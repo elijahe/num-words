@@ -60,6 +60,8 @@ const PERIOD_NAMES = [
 	"vigintillion",
 ];
 
+export const MAX_NUM_DIGITS = PERIOD_NAMES.length * 3;
+
 /**
  * Private helper method which converts a two digit string to words.
  * For performance and simplicity this function assumes that the
@@ -120,7 +122,7 @@ export const __TEST_ONLY__ = {
 };
 
 export function isValidNumber(inputString) {
-	return /^-?(([1-9]\d*)|0)$/.test(inputString);
+	return /^((-?([1-9]\d*))|0)$/.test(inputString);
 }
 
 export default function numberToWords(inputString) {
@@ -138,8 +140,13 @@ export default function numberToWords(inputString) {
 	let currentPeriodIndex = 0;
 	let currentDigitGroup = unparsedString.substring(unparsedString.length - 3);
 
+	if (MAX_NUM_DIGITS < unparsedString.length) {
+		throw Error("The number of digits exceeds the maximum supported length of " + MAX_NUM_DIGITS);
+	}
+
 	while (0 < currentDigitGroup.length) {
 		let currentDigitGroupConverted = "";
+		const isPartOfLargerNumber = 0 < unparsedString.length - 3;
 
 		if (0 < currentPeriodIndex && 0 < words.length && " " !== words.charAt(0)) {
 			words = " " + words;
@@ -153,7 +160,7 @@ export default function numberToWords(inputString) {
 				currentDigitGroupConverted = _doubleDigitToWords(currentDigitGroup);
 				break;
 			case 3:
-				currentDigitGroupConverted = _tripleDigitToWords(currentDigitGroup, 0 < unparsedString.length - 3, 0 === currentPeriodIndex);
+				currentDigitGroupConverted = _tripleDigitToWords(currentDigitGroup, isPartOfLargerNumber, 0 === currentPeriodIndex);
 				break;
 			default:
 				// should not be reachable

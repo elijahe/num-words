@@ -1,5 +1,6 @@
 import {assert} from "chai";
 import numberToWords, {
+	MAX_NUM_DIGITS,
 	isValidNumber,
 	__TEST_ONLY__
 } from "../src/converter";
@@ -117,11 +118,32 @@ describe("converter", function() {
 
 	describe("numberToWords", function() {
 		context("invalid input", function() {
-			it("throws an exception for invalid input", function() {
-				assert.throws(numberToWords.bind(this, "1.1"));
-				assert.throws(numberToWords.bind(this, "$1"));
-				assert.throws(numberToWords.bind(this, "1,000"));
-				assert.throws(numberToWords.bind(this, "012"));
+			it("throws an error for input containing unsupported characters", function() {
+				assert.throws(numberToWords.bind(this, "1.1"), Error, "Invalid input");
+				assert.throws(numberToWords.bind(this, "$1"), Error, "Invalid input");
+				assert.throws(numberToWords.bind(this, "1,000"), Error, "Invalid input");
+			});
+
+			it("throws an error for numbers that start with a 0", function() {
+				assert.throws(numberToWords.bind(this, "012"), Error, "Invalid input");
+				assert.throws(numberToWords.bind(this, "0001"), Error, "Invalid input");
+			});
+
+			it("throws an error for '-0'", function() {
+				assert.throws(numberToWords.bind(this, "-0"), Error, "Invalid input");
+			});
+
+			it("throws an error for input that exceeds the maximum supported length of digits", function() {
+				assert.throws(
+					numberToWords.bind(this, "1".repeat(MAX_NUM_DIGITS + 1)),
+					Error,
+					"The number of digits exceeds the maximum supported length of " + MAX_NUM_DIGITS
+				);
+				assert.throws(
+					numberToWords.bind(this, "-" + "1".repeat(MAX_NUM_DIGITS + 1)),
+					Error,
+					"The number of digits exceeds the maximum supported length of " + MAX_NUM_DIGITS
+				);
 			});
 		});
 
@@ -182,7 +204,7 @@ describe("converter", function() {
 				assert.equal(numberToWords("9000000000000000000000000000000000000000000000000000000001000001"), "Nine vigintillion one million and one");
 				assert.equal(numberToWords("999000000000000000000000000000000000000000000000000000000001000001"), "Nine hundred ninety nine vigintillion one million and one");
 				assert.equal(
-					numberToWords("999999999999999999999999999999999999999999999999999999999999999999"),
+					numberToWords("9".repeat(MAX_NUM_DIGITS)),
 					"Nine hundred ninety nine vigintillion" +
 					" nine hundred ninety nine novemdecillion" +
 					" nine hundred ninety nine octodecillion" +
@@ -207,7 +229,7 @@ describe("converter", function() {
 					" nine hundred and ninety nine"
 				);
 				assert.equal(
-					numberToWords("-999999999999999999999999999999999999999999999999999999999999999999"),
+					numberToWords("-" + "9".repeat(MAX_NUM_DIGITS)),
 					"Minus nine hundred ninety nine vigintillion" +
 					" nine hundred ninety nine novemdecillion" +
 					" nine hundred ninety nine octodecillion" +
