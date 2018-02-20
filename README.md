@@ -1,15 +1,21 @@
-# Description
+# THIS IS STILL A WORK IN PROGRESS
 Convert numbers into words.
 
-# Quick Start
-Clone this repo or download the folder and open **index.html** in Chrome or Firefox.
+## Limitations
+* Supports integers from (-10^64 + 1) to (10^64 - 1)
+* Does not support delimiters or decimal points
 
-# Limitations
-Does not support ...
-
-# Developing
+# Contributing
 
 ## Prerequisites
+Node (version 8.9.4 tested)
+npm (version 5.6.0 tested)
 
 ## Running the tests
 `npm test`
+
+## Running eslint
+`npm run lint`
+
+## Building
+`npm run build`
