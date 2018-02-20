@@ -119,6 +119,9 @@ describe("converter", function() {
 		context("invalid input", function() {
 			it("throws an exception for invalid input", function() {
 				assert.throws(numberToWords.bind(this, "1.1"));
+				assert.throws(numberToWords.bind(this, "$1"));
+				assert.throws(numberToWords.bind(this, "1,000"));
+				assert.throws(numberToWords.bind(this, "012"));
 			});
 		});
 

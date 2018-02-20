@@ -25,8 +25,6 @@ const TEN_TO_NINETEEN = [
 ];
 
 const TWENTY_TO_NINETY = [
-	"",
-	"",
 	"twenty",
 	"thirty",
 	"forty",
@@ -76,12 +74,12 @@ function _doubleDigitToWords(doubleDigitString) {
 	} else if (10 <= doubleDigitNumber && 20 > doubleDigitNumber) {
 		words += TEN_TO_NINETEEN[doubleDigitNumber - 10];
 	} else if (20 <= doubleDigitNumber) {
-		let decimalDigit = doubleDigitString.charAt(0);
-		let singleDigit = doubleDigitString.charAt(1);
+		let decimalDigit = Number.parseInt(doubleDigitString.charAt(0));
+		let singleDigit = Number.parseInt(doubleDigitString.charAt(1));
 
-		words += TWENTY_TO_NINETY[decimalDigit];
+		words += TWENTY_TO_NINETY[decimalDigit - 2];
 
-		if (singleDigit !== "0") {
+		if (0 < singleDigit) {
 			words += " " + SINGLE_DIGITS[singleDigit];
 		}
 	}
