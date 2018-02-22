@@ -1,5 +1,3 @@
-import UIStrings from "../constants/ui-strings";
-
 const SINGLE_DIGITS = [
 	"zero",
 	"one",
@@ -123,13 +121,16 @@ function isValidInteger(inputString) {
 	return /^((-?([1-9]\d*))|0)$/.test(inputString);
 }
 
+const ERROR_INVALID_INTEGER = "The input is not a valid integer.";
+const ERROR_MAX_LENGTH_EXCEEDED = "The number of digits exceeds the maximum supported length of " + MAX_NUM_DIGITS + ".";
+
 function integerToWords(inputString) {
 	if (0 === inputString.length) {
 		return "";
 	}
 
 	if (!isValidInteger(inputString)) {
-		throw Error(UIStrings.ERROR_INVALID_INTEGER);
+		throw Error(ERROR_INVALID_INTEGER);
 	}
 
 	let words = "";
@@ -139,7 +140,7 @@ function integerToWords(inputString) {
 	let currentDigitGroup = unparsedString.substring(unparsedString.length - 3);
 
 	if (MAX_NUM_DIGITS < unparsedString.length) {
-		throw Error(UIStrings.ERROR_MAX_LENGTH_EXCEEDED(MAX_NUM_DIGITS));
+		throw Error(ERROR_MAX_LENGTH_EXCEEDED);
 	}
 
 	while (0 < currentDigitGroup.length) {
@@ -188,6 +189,8 @@ export default {
 	integerToWords: integerToWords,
 	__TEST_ONLY__: {
 		_doubleDigitToWords: _doubleDigitToWords,
-		_tripleDigitToWords: _tripleDigitToWords
+		_tripleDigitToWords: _tripleDigitToWords,
+		ERROR_INVALID_INTEGER: ERROR_INVALID_INTEGER,
+		ERROR_MAX_LENGTH_EXCEEDED: ERROR_MAX_LENGTH_EXCEEDED
 	}
 };

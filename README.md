@@ -1,15 +1,22 @@
-# THIS IS STILL A WORK IN PROGRESS
-Convert numbers into words.
+# Description
+Converts integers into words.
 
 ## Limitations
 * Supports integers with 66 digits or less
 * Does not support delimiters or decimal points
 
+# Demo
+
+https://elijahe.github.io/num-words
+
+## Running locally
+Open **index.html** in a browser. (tested on Chrome v64 and Firefox v58)
+
 # Contributing
 
 ## Prerequisites
-Node (version 8.9.4 tested)
-npm (version 5.6.0 tested)
+* Install Node and npm (tested on node version 8.9.4 and npm version 5.6.0)
+* Run `npm install`
 
 ## Running the tests
 `npm test`
@@ -19,3 +26,6 @@ npm (version 5.6.0 tested)
 
 ## Building
 `npm run build`
+
+## Watching
+`npm run watch`

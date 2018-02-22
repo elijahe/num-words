@@ -2,7 +2,6 @@ import Colors from "../constants/colors";
 import Converter from "../converter/converter";
 import React from "react";
 import StyledComponents, {keyframes} from "styled-components";
-import UIStrings from "../constants/ui-strings";
 
 const highlight = keyframes`
 	0% {
@@ -102,7 +101,7 @@ export default class AppController extends React.Component {
 		}, () => {
 			try {
 				this.setState({
-					convertedString: Converter.integerToWords(this.state.inputString),
+					convertedString: Converter.integerToWords(this.state.inputString.trim()),
 					errorString: ""
 				});
 			} catch (error) {
@@ -115,16 +114,17 @@ export default class AppController extends React.Component {
 
 	render() {
 		const hasError = "" !== this.state.errorString;
+		const placeholderString = "Enter any integer (max " + Converter.MAX_NUM_DIGITS + " digits)";
 		return <Wrapper>
 			<InputLabel
 				isVisible={"" !== this.state.inputString}
 			>
-				{UIStrings.PLACEHOLDER}
+				{placeholderString}
 			</InputLabel>
 			<InputField
 				type="text"
 				innerRef={(node) => this.inputFieldNode = node}
-				placeholder={UIStrings.PLACEHOLDER}
+				placeholder={placeholderString}
 				value={this.state.inputString}
 				hasError={hasError}
 				onChange={this.onInputChange}

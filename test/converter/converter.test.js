@@ -1,9 +1,10 @@
 import {assert} from "chai";
 import Converter from "../../src/converter/converter";
-import UIStrings from "../../src/constants/ui-strings";
 
 const _doubleDigitToWords = Converter.__TEST_ONLY__._doubleDigitToWords;
 const _tripleDigitToWords = Converter.__TEST_ONLY__._tripleDigitToWords;
+const ERROR_INVALID_INTEGER = Converter.__TEST_ONLY__.ERROR_INVALID_INTEGER;
+const ERROR_MAX_LENGTH_EXCEEDED = Converter.__TEST_ONLY__.ERROR_MAX_LENGTH_EXCEEDED;
 
 describe("converter", function() {
 
@@ -116,30 +117,30 @@ describe("converter", function() {
 	describe("integerToWords", function() {
 		context("invalid input", function() {
 			it("throws an error for input containing unsupported characters", function() {
-				assert.throws(Converter.integerToWords.bind(this, "1.1"), Error, UIStrings.ERROR_INVALID_INTEGER);
-				assert.throws(Converter.integerToWords.bind(this, "$1"), Error, UIStrings.ERROR_INVALID_INTEGER);
-				assert.throws(Converter.integerToWords.bind(this, "1,000"), Error, UIStrings.ERROR_INVALID_INTEGER);
+				assert.throws(Converter.integerToWords.bind(this, "1.1"), Error, ERROR_INVALID_INTEGER);
+				assert.throws(Converter.integerToWords.bind(this, "$1"), Error, ERROR_INVALID_INTEGER);
+				assert.throws(Converter.integerToWords.bind(this, "1,000"), Error, ERROR_INVALID_INTEGER);
 			});
 
 			it("throws an error for numbers that start with a 0", function() {
-				assert.throws(Converter.integerToWords.bind(this, "012"), Error, UIStrings.ERROR_INVALID_INTEGER);
-				assert.throws(Converter.integerToWords.bind(this, "0001"), Error, UIStrings.ERROR_INVALID_INTEGER);
+				assert.throws(Converter.integerToWords.bind(this, "012"), Error, ERROR_INVALID_INTEGER);
+				assert.throws(Converter.integerToWords.bind(this, "0001"), Error, ERROR_INVALID_INTEGER);
 			});
 
 			it("throws an error for '-0'", function() {
-				assert.throws(Converter.integerToWords.bind(this, "-0"), Error, UIStrings.ERROR_INVALID_INTEGER);
+				assert.throws(Converter.integerToWords.bind(this, "-0"), Error, ERROR_INVALID_INTEGER);
 			});
 
 			it("throws an error for input that exceeds the maximum supported length of digits", function() {
 				assert.throws(
 					Converter.integerToWords.bind(this, "1".repeat(Converter.MAX_NUM_DIGITS + 1)),
 					Error,
-					UIStrings.ERROR_MAX_LENGTH_EXCEEDED(Converter.MAX_NUM_DIGITS)
+					ERROR_MAX_LENGTH_EXCEEDED
 				);
 				assert.throws(
 					Converter.integerToWords.bind(this, "-" + "1".repeat(Converter.MAX_NUM_DIGITS + 1)),
 					Error,
-					UIStrings.ERROR_MAX_LENGTH_EXCEEDED(Converter.MAX_NUM_DIGITS)
+					ERROR_MAX_LENGTH_EXCEEDED
 				);
 			});
 
