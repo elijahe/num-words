@@ -1,0 +1,9 @@
+html, body, div#root {
+	background-color: rgba(30, 30, 30, 1);
+	font-family: monospace;
+	font-size: 18px;
+	height: 100%;
+	margin: 0;
+	overflow: hidden;
+	width: 100%;
+}

@@ -2,7 +2,7 @@
 Convert numbers into words.
 
 ## Limitations
-* Supports integers from (-10^64 + 1) to (10^64 - 1)
+* Supports integers with 66 digits or less
 * Does not support delimiters or decimal points
 
 # Contributing

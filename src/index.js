@@ -1,13 +1,8 @@
+import AppController from "./components/app-controller";
 import React from "react";
 import ReactDOM from "react-dom";
 
-class NumWords extends React.Component {
-	render() {
-		return <input type="text" />;
-	}
-}
-
 ReactDOM.render(
-	<NumWords />,
+	<AppController />,
 	document.getElementById("root")
 );

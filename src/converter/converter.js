@@ -1,3 +1,5 @@
+import UIStrings from "../constants/ui-strings";
+
 const SINGLE_DIGITS = [
 	"zero",
 	"one",
@@ -60,7 +62,7 @@ const PERIOD_NAMES = [
 	"vigintillion",
 ];
 
-export const MAX_NUM_DIGITS = PERIOD_NAMES.length * 3;
+const MAX_NUM_DIGITS = PERIOD_NAMES.length * 3;
 
 /**
  * Private helper method which converts a two digit string to words.
@@ -116,22 +118,18 @@ function _tripleDigitToWords(tripleDigitString, isPartOfLargerNumber, isFirst) {
 	return words.trim();
 }
 
-export const __TEST_ONLY__ = {
-	_doubleDigitToWords: _doubleDigitToWords,
-	_tripleDigitToWords: _tripleDigitToWords
-};
 
-export function isValidNumber(inputString) {
+function isValidInteger(inputString) {
 	return /^((-?([1-9]\d*))|0)$/.test(inputString);
 }
 
-export default function numberToWords(inputString) {
-	if (!isValidNumber(inputString)) {
-		throw Error("Invalid input");
-	}
-
+function integerToWords(inputString) {
 	if (0 === inputString.length) {
 		return "";
+	}
+
+	if (!isValidInteger(inputString)) {
+		throw Error(UIStrings.ERROR_INVALID_INTEGER);
 	}
 
 	let words = "";
@@ -141,7 +139,7 @@ export default function numberToWords(inputString) {
 	let currentDigitGroup = unparsedString.substring(unparsedString.length - 3);
 
 	if (MAX_NUM_DIGITS < unparsedString.length) {
-		throw Error("The number of digits exceeds the maximum supported length of " + MAX_NUM_DIGITS);
+		throw Error(UIStrings.ERROR_MAX_LENGTH_EXCEEDED(MAX_NUM_DIGITS));
 	}
 
 	while (0 < currentDigitGroup.length) {
@@ -178,8 +176,18 @@ export default function numberToWords(inputString) {
 	}
 
 	if (isNegative) {
-		words = "Minus " + words;
+		words = "Negative " + words;
 	}
 
 	return words.charAt(0).toUpperCase() + words.substring(1);
 }
+
+export default {
+	MAX_NUM_DIGITS: MAX_NUM_DIGITS,
+	isValidInteger: isValidInteger,
+	integerToWords: integerToWords,
+	__TEST_ONLY__: {
+		_doubleDigitToWords: _doubleDigitToWords,
+		_tripleDigitToWords: _tripleDigitToWords
+	}
+};

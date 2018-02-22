@@ -1,19 +1,19 @@
 {
 	"name": "num-words",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Converts numbers into words",
-	"main": "index.js",
+	"main": "src/index.js",
 	"scripts": {
 		"build": "webpack",
 		"lint": "eslint .",
-		"test": "karma start"
+		"test": "karma start",
+		"watch": "webpack --watch --config webpack.dev.config.js"
 	},
 	"repository": {
 		"type": "git",
 		"url": "."
 	},
 	"keywords": [
-		"sonatype",
 		"number",
 		"numbers",
 		"word",
@@ -29,6 +29,8 @@
 		"babel-preset-env": "^1.6.1",
 		"babel-preset-react": "^6.24.1",
 		"chai": "^4.1.2",
+		"enzyme": "^3.3.0",
+		"enzyme-adapter-react-16": "^1.1.1",
 		"eslint": "^4.17.0",
 		"eslint-plugin-react": "^7.6.1",
 		"karma": "^2.0.0",
